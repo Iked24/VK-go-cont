@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker Container Status</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+    <h1>Docker Container Status</h1>
+    <table id="status-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:1111/ws');
+        ws.onmessage = function (event) {
+            const containers = JSON.parse(event.data);
+            const tbody = document.querySelector('#status-table tbody');
+            tbody.innerHTML = '';
+            containers.forEach(container => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${container.id}</td>
+                    <td>${container.name}</td>
+                    <td>${container.status}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        };
+    </script>
+</body>
+
+</html>
